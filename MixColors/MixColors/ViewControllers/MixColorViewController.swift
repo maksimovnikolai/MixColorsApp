@@ -31,6 +31,10 @@ final class MixColorViewController: UIViewController {
         super.viewDidLoad()
         commonInit()
     }
+    
+    override func viewWillLayoutSubviews() {
+        mainStackView.spacing = UIDevice.current.orientation == .portrait ? 80 : 20
+    }
 }
 
 // MARK: - Common Init
