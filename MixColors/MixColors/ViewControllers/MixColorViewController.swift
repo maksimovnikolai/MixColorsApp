@@ -37,7 +37,11 @@ final class MixColorViewController: UIViewController {
 extension MixColorViewController {
     
     private func commonInit() {
-
+        configureNavBar()
+        configureButtonsStackView()
+        configureResultStackView()
+        configureMAinStackView()
+        setupMainStackViewConstraints()
     }
 }
 
@@ -89,6 +93,20 @@ extension MixColorViewController {
         [buttonsStackView, equalLabel, resultStackView].forEach {
             mainStackView.addArrangedSubview($0)
         }
+    }
+}
+
+// MARK: - Setup Main Stack View
+extension MixColorViewController {
+    
+    private func setupMainStackViewConstraints() {
+        view.addSubview(mainStackView)
+        mainStackView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            mainStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            mainStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            
+        ])
     }
 }
 
