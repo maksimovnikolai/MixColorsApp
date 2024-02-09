@@ -37,10 +37,61 @@ final class MixColorViewController: UIViewController {
 extension MixColorViewController {
     
     private func commonInit() {
-     
-        
+
     }
 }
+
+// MARK: UI Configuration
+extension MixColorViewController {
+    
+    private func configureNavBar() {
+        navigationItem.title = "Mix Colors"
+        view.backgroundColor = .systemBackground
+    }
+    
+    private func configureButtonsStackView() {
+        let leftVertStackView = UIStackView()
+        leftVertStackView.axis = .vertical
+        leftVertStackView.spacing = 5
+        leftVertStackView.alignment = .center
+        leftVertStackView.distribution = .fill
+        [firstColorTitleLabel, firstColorButton].forEach {
+            leftVertStackView.addArrangedSubview($0)
+        }
+        
+        let rightVertStackView = UIStackView()
+        rightVertStackView.axis = .vertical
+        rightVertStackView.spacing = 5
+        rightVertStackView.alignment = .center
+        rightVertStackView.distribution = .fill
+        [secondColorTitleLabel, secondColorButton].forEach { rightVertStackView.addArrangedSubview($0)
+        }
+        
+        buttonsStackView.spacing = 40
+        buttonsStackView.alignment = .fill
+        buttonsStackView.distribution = .fill
+        buttonsStackView.contentMode = .scaleToFill
+        [leftVertStackView, plusLabel, rightVertStackView].forEach { buttonsStackView.addArrangedSubview($0) }
+    }
+    
+    private func configureResultStackView() {
+        resultStackView.axis = .vertical
+        resultStackView.spacing = 5
+        resultStackView.alignment = .center
+        resultStackView.distribution = .fill
+        [resultLabel, resultColorView].forEach { resultStackView.addArrangedSubview($0) }
+    }
+    
+    private func configureMAinStackView() {
+        mainStackView.axis = .vertical
+        mainStackView.alignment = .fill
+        mainStackView.distribution = .fill
+        [buttonsStackView, equalLabel, resultStackView].forEach {
+            mainStackView.addArrangedSubview($0)
+        }
+    }
+}
+
 
 // MARK: - User Interface Design Methods
 extension MixColorViewController {
