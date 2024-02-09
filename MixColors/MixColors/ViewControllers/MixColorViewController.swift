@@ -7,16 +7,30 @@
 
 import UIKit
 
-class MixColorViewController: UIViewController {
+final class MixColorViewController: UIViewController {
 
+    // MARK: Private Properties
+    private lazy var firstColorTitleLabel: UILabel = makeLabel(withTitle: "Blue")
+    private lazy var firstColorButton = makeButton(.blue)
+    
+    private lazy var secondColorTitleLabel: UILabel = makeLabel(withTitle: "Red")
+    private lazy var secondColorButton = makeButton(.red)
+    
+    private lazy var resultLabel: UILabel = makeLabel(withTitle: "Result")
+    private lazy var resultColorView: UIView = makeView()
+    
+    private lazy var plusLabel: UILabel = makeLabel(withTitle: "+", size: 40)
+    private lazy var equalLabel: UILabel = makeLabel(withTitle: "=", size: 40)
+    
+    private let buttonsStackView = UIStackView()
+    private let resultStackView = UIStackView()
+    private let mainStackView = UIStackView()
     
     // MARK: Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         commonInit()
     }
-
-
 }
 
 // MARK: - Common Init
@@ -28,7 +42,7 @@ extension MixColorViewController {
     }
 }
 
-// MARK: Make UI-element
+// MARK: - User Interface Design Methods
 extension MixColorViewController {
     
     private func makeButton(_ backgroundColor: UIColor) -> UIButton {
