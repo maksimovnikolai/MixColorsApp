@@ -10,13 +10,13 @@ import UIKit
 final class MixColorViewController: UIViewController {
     
     // MARK: Private Properties
-    private lazy var firstColorTitleLabel: UILabel = makeLabel(withTitle: "Blue")
+    private lazy var firstColorTitleLabel: UILabel = makeLabel(withTitle: "Blue".localized())
     private lazy var firstColorButton = makeButton(.blue)
     
-    private lazy var secondColorTitleLabel: UILabel = makeLabel(withTitle: "Red")
+    private lazy var secondColorTitleLabel: UILabel = makeLabel(withTitle: "Red".localized())
     private lazy var secondColorButton = makeButton(.red)
     
-    private lazy var resultLabel: UILabel = makeLabel(withTitle: "Result")
+    private lazy var resultLabel: UILabel = makeLabel(withTitle: "Purple".localized())
     private lazy var resultColorView: UIView = makeView()
     
     private lazy var plusLabel: UILabel = makeLabel(withTitle: "+", size: 40)
@@ -26,14 +26,16 @@ final class MixColorViewController: UIViewController {
     private let resultStackView = UIStackView()
     private let mainStackView = UIStackView()
     
+    private let device = UIDevice.current.orientation
+    
     // MARK: Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         commonInit()
     }
     
-    override func viewWillLayoutSubviews() {
-        mainStackView.spacing = UIDevice.current.orientation.isLandscape ? 20 : 80
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        settingsStacksDependingDevicePosition()
     }
 }
 
@@ -66,7 +68,25 @@ extension MixColorViewController {
     @objc
     private func setNewColorToSecondButton() {
         createColorPickerView(tag: 1)
-        
+    }
+    
+    private func settingsStacksDependingDevicePosition() {
+       
+        if device.isLandscape {
+            mainStackView.axis = .horizontal
+            mainStackView.alignment = .center
+            mainStackView.distribution = .equalSpacing
+            
+            buttonsStackView.axis = .horizontal
+            buttonsStackView.alignment = .center
+            buttonsStackView.distribution = .equalSpacing
+            buttonsStackView.spacing = 40
+        } else {
+            mainStackView.axis = .vertical
+            buttonsStackView.axis = .vertical
+            buttonsStackView.spacing = 30
+        }
+
     }
     
     private func createColorPickerView(tag: Int) {
@@ -76,12 +96,11 @@ extension MixColorViewController {
         present(picker, animated: true)
     }
     
-    
     private func changeLeftButtonColor(color: UIColor) {
         firstColorButton.configuration?.baseBackgroundColor = color
     }
     
-     private func addingColors(_ color1: UIColor, with color2: UIColor) -> UIColor {
+    private func addingColors(_ color1: UIColor, with color2: UIColor) -> UIColor {
         var (r1, g1, b1, a1) = (CGFloat(0), CGFloat(0), CGFloat(0), CGFloat(0))
         var (r2, g2, b2, a2) = (CGFloat(0), CGFloat(0), CGFloat(0), CGFloat(0))
         
@@ -92,7 +111,8 @@ extension MixColorViewController {
     }
     
     private func setResultViewColor() {
-        let newColor = addingColors(firstColorButton.configuration?.baseBackgroundColor ?? .white, with: secondColorButton.configuration?.baseBackgroundColor ?? .black)
+        let newColor = addingColors(firstColorButton.configuration?.baseBackgroundColor ?? .white,
+                                    with: secondColorButton.configuration?.baseBackgroundColor ?? .black)
         resultColorView.backgroundColor = newColor
         resultLabel.text = newColor.accessibilityName.capitalized
     }
@@ -123,48 +143,48 @@ extension MixColorViewController {
         view.backgroundColor = .systemBackground
     }
     
+    private func stackViewConfigureHelper(_ arrangedSubViews: UIView...) -> UIStackView {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = 5
+        stackView.alignment = .center
+        stackView.distribution = .equalCentering
+        arrangedSubViews.forEach {
+            stackView.addArrangedSubview($0)
+        }
+        return stackView
+    }
+        
+    // Buttons Stack Configure
     private func configureButtonsStackView() {
-        let leftVertStackView = UIStackView()
-        leftVertStackView.axis = .vertical
-        leftVertStackView.spacing = 5
-        leftVertStackView.alignment = .center
-        leftVertStackView.distribution = .fill
-        [firstColorTitleLabel, firstColorButton].forEach {
-            leftVertStackView.addArrangedSubview($0)
-        }
+        let firstColorStack = stackViewConfigureHelper(firstColorTitleLabel, firstColorButton)
+        let secondColorStack = stackViewConfigureHelper(secondColorTitleLabel, secondColorButton)
+        buttonsStackView.axis = device.isPortrait ? .vertical : .horizontal
+        buttonsStackView.spacing = device.isPortrait ? 30 : 40
+        buttonsStackView.alignment = device.isPortrait ? .fill : .center
+        buttonsStackView.distribution = device.isPortrait ? .fillProportionally : .equalSpacing
         
-        let rightVertStackView = UIStackView()
-        rightVertStackView.axis = .vertical
-        rightVertStackView.spacing = 5
-        rightVertStackView.alignment = .center
-        rightVertStackView.distribution = .fill
-        [secondColorTitleLabel, secondColorButton].forEach {
-            rightVertStackView.addArrangedSubview($0)
-        }
-        
-        buttonsStackView.spacing = 40
-        buttonsStackView.alignment = .fill
-        buttonsStackView.distribution = .fill
-        buttonsStackView.contentMode = .scaleToFill
-        [leftVertStackView, plusLabel, rightVertStackView].forEach {
+        [firstColorStack, plusLabel, secondColorStack].forEach {
             buttonsStackView.addArrangedSubview($0)
         }
     }
     
+    // Result Stack Configure
     private func configureResultStackView() {
         resultStackView.axis = .vertical
         resultStackView.spacing = 5
         resultStackView.alignment = .center
-        resultStackView.distribution = .fill
+        resultStackView.distribution = .equalCentering
         [resultLabel, resultColorView].forEach {
             resultStackView.addArrangedSubview($0)
         }
     }
-    
+
+    // Main Stack Configure
     private func configureMAinStackView() {
-        mainStackView.axis = .vertical
-        mainStackView.alignment = .fill
-        mainStackView.distribution = .fill
+        mainStackView.axis = UIDevice.current.orientation.isPortrait ? .vertical : .horizontal
+        mainStackView.alignment = .center
+        mainStackView.distribution = .equalSpacing
         [buttonsStackView, equalLabel, resultStackView].forEach {
             mainStackView.addArrangedSubview($0)
         }
@@ -178,12 +198,13 @@ extension MixColorViewController {
         view.addSubview(mainStackView)
         mainStackView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            mainStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            mainStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            mainStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            mainStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            mainStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            mainStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
         ])
     }
 }
-
 
 // MARK: - User Interface Design Methods
 extension MixColorViewController {
@@ -202,6 +223,7 @@ extension MixColorViewController {
         label.text = title
         label.font = .boldSystemFont(ofSize: size ?? 16)
         label.textAlignment = .center
+        label.numberOfLines = 0
         return label
     }
     
@@ -209,6 +231,7 @@ extension MixColorViewController {
         let view = UIView()
         view.layer.cornerRadius = 5
         view.backgroundColor = .yellow
+        
         view.heightAnchor.constraint(equalToConstant: 100).isActive = true
         view.widthAnchor.constraint(equalToConstant: 100).isActive = true
         return view
