@@ -7,6 +7,9 @@
 
 import UIKit
 
+// Реализовать переключение языка
+// Добавить анимацию 
+
 final class MixColorViewController: UIViewController {
     
     // MARK: Private Properties
@@ -21,14 +24,20 @@ final class MixColorViewController: UIViewController {
     
     private lazy var plusLabel: UILabel = .makeLabel(withTitle: "+", size: 40)
     private lazy var equalLabel: UILabel = .makeLabel(withTitle: "=", size: 40)
-
     
+    private var segmentedControl: UISegmentedControl = {
+        let items = ["RU", "EN"]
+        let sc = UISegmentedControl(items: items)
+        return sc
+    }()
+
     private let mainStackView = UIStackView()
     
     private var top: CGFloat = 20
     private var leading: CGFloat = 60
     private var trailing: CGFloat = -60
     private var bottom: CGFloat = -20
+    
     
     // MARK: Life Cycle
     override func viewDidLoad() {
@@ -50,6 +59,7 @@ extension MixColorViewController {
         settingsStacksDependingDevicePosition()
         addTargets()
         setResultViewColor()
+        setupSegmentedControl()
     }
 }
 
@@ -68,6 +78,26 @@ extension MixColorViewController {
     @objc
     private func setNewColorToSecondButton() {
         createColorPickerView(tag: 1)
+    }
+    
+    private func setupSegmentedControl() {
+        view.addSubview(segmentedControl)
+        segmentedControl.translatesAutoresizingMaskIntoConstraints = false
+        segmentedControl.addTarget(self, action: #selector(changeLanguage), for: .valueChanged)
+        NSLayoutConstraint.activate([
+            segmentedControl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            segmentedControl.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 5)
+        ])
+    }
+    
+    @objc
+    private func changeLanguage(_ sc: UISegmentedControl) {
+        switch sc.selectedSegmentIndex {
+        case 0:
+            print("ru")
+        default:
+            print("en")
+        }
     }
     
     private func createColorPickerView(tag: Int) {
@@ -169,12 +199,9 @@ extension MixColorViewController {
             leading = 30
             trailing = -30
             bottom = -30
+            
         }
     }
-}
-
-// MARK: - Setup Main Stack View
-extension MixColorViewController {
     
     private func setupMainStackViewConstraints(top: CGFloat, leading: CGFloat, trailing: CGFloat, bottom: CGFloat) {
         mainStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: top).isActive = true
@@ -183,3 +210,4 @@ extension MixColorViewController {
         mainStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: trailing).isActive = true
     }
 }
+
